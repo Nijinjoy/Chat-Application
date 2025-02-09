@@ -1,14 +1,18 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import SplashScreen from '../screens/SplashScreen';
-import RegisterScreen from '../screens/RegisterScreen'
+
+// Import Screens
 import HomeScreen from '../screens/HomeScreen';
 import ChatlistScreen from '../screens/ChatListScreen';
+import SettingScreen from '../screens/SettingScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import SplashScreen from '../screens/SplashScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 
+// Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
 
 const BottomTabs = () => {
@@ -17,23 +21,38 @@ const BottomTabs = () => {
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ color, size }) => {
                     let iconName;
-                    if (route.name === 'Home') {
-                        iconName = 'home';
-                    } else if (route.name === 'Profile') {
-                        iconName = 'person';
+                    switch (route.name) {
+                        case 'Home':
+                            iconName = 'home';
+                            break;
+                        case 'Chat':
+                            iconName = 'chat';
+                            break;
+                        case 'Settings':
+                            iconName = 'settings';
+                            break;
+                        case 'Profile':
+                            iconName = 'person';
+                            break;
+                        default:
+                            iconName = 'circle';
                     }
                     return <Icon name={iconName} size={size} color={color} />;
                 },
                 tabBarActiveTintColor: 'green',
                 tabBarInactiveTintColor: 'gray',
+                tabBarStyle: { height: 60 }, // Slightly taller for better touch experience
             })}
         >
-            <Tab.Screen name="HomeScreen" component={HomeScreen} />
-            <Tab.Screen name="ChatlistScreen" component={ChatlistScreen} />
+            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Chat" component={ChatlistScreen} />
+            <Tab.Screen name="Settings" component={SettingScreen} />
+            <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>
     );
 };
 
+// Stack Navigator
 const Stack = createStackNavigator();
 
 const Routes = () => {
@@ -41,7 +60,7 @@ const Routes = () => {
         <NavigationContainer>
             <Stack.Navigator>
                 <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
-                <Stack.Screen name="SplashScreen" component={SplashScreen} />
+                <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
             </Stack.Navigator>
         </NavigationContainer>
