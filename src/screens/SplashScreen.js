@@ -1,36 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, Image, StyleSheet, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text } from 'react-native'
+import React from 'react'
 
 const SplashScreen = () => {
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            navigation.navigate('RegisterScreen'); // Navigate after 4 seconds
-        }, 4000);
-
-        return () => clearTimeout(timer); // Cleanup timeout on unmount
-    }, [navigation]);
-
     return (
-        <View style={styles.container}>
-            <Text>SplashScreen</Text>
-        </View>
-    );
-};
+      <View>
+          <Text>SplashScreen</Text>
+      </View>
+    )
+}
 
-export default SplashScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-    },
-    image: {
-        width: 250,
-        height: 250,
-    },
-});
+export default SplashScreen
