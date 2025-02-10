@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-// Import Screens
 import HomeScreen from '../screens/HomeScreen';
 import ChatlistScreen from '../screens/ChatListScreen';
 import SettingScreen from '../screens/SettingScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SplashScreen from '../screens/SplashScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import LoginScreen from '../screens/LoginScreen';
+import WelcomeScreen from '../screens/WelcomeScreen';
 
-// Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
 
 const BottomTabs = () => {
@@ -41,7 +42,7 @@ const BottomTabs = () => {
                 },
                 tabBarActiveTintColor: 'green',
                 tabBarInactiveTintColor: 'gray',
-                tabBarStyle: { height: 60 }, // Slightly taller for better touch experience
+                tabBarStyle: { height: 60 },
             })}
         >
             <Tab.Screen name="Home" component={HomeScreen} />
@@ -52,16 +53,36 @@ const BottomTabs = () => {
     );
 };
 
-// Stack Navigator
 const Stack = createStackNavigator();
 
 const Routes = () => {
+    const [initialRoute, setInitialRoute] = useState('SplashScreen');
+
+    useEffect(() => {
+        const checkUserRegistration = async () => {
+            try {
+                const userRegistered = await AsyncStorage.getItem('userRegistered');
+                if (userRegistered === 'true') {
+                    setInitialRoute('Main'); // If registered, go to Home
+                } else {
+                    setInitialRoute('WelcomeScreen'); // If not, go to Welcome/Register
+                }
+            } catch (error) {
+                console.error('Error reading user registration status:', error);
+            }
+        };
+
+        checkUserRegistration();
+    }, []);
+
     return (
         <NavigationContainer>
-            <Stack.Navigator>
-                <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
+            <Stack.Navigator initialRouteName={initialRoute}>
                 <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+                <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
+                <Stack.Screen name="LoginScreen" component={LoginScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );
