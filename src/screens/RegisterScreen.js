@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import InputComponent from '../components/InputComponent';
+import {
+    validateUsername,
+    validateEmail,
+    validatePassword,
+    validateConfirmPassword,
+} from '../utils/validation';
 
 const RegisterScreen = ({ navigation }) => {
     const [username, setUsername] = useState('');
@@ -8,68 +15,70 @@ const RegisterScreen = ({ navigation }) => {
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleRegister = () => {
-        if (!username || !email || !password || !confirmPassword) {
-            Alert.alert('Error', 'All fields are required');
+        if (!validateUsername(username)) {
+            Alert.alert('Error', 'Username must be at least 3 characters long');
             return;
         }
-        if (password !== confirmPassword) {
+        if (!validateEmail(email)) {
+            Alert.alert('Error', 'Enter a valid email address');
+            return;
+        }
+        if (!validatePassword(password)) {
+            Alert.alert(
+                'Error',
+                'Password must be 8-20 characters long and include at least one uppercase letter, one number, and one special character.'
+            );
+            return;
+        }
+        if (!validateConfirmPassword(password, confirmPassword)) {
             Alert.alert('Error', 'Passwords do not match');
             return;
         }
 
         Alert.alert('Success', 'Registration successful');
-        navigation.replace('LoginScreen'); // Navigate to Login
+        navigation.replace('LoginScreen');
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Register</Text>
 
-            {/* Username Input */}
-            <TextInput
-                style={styles.input}
+            <InputComponent
                 placeholder="Username"
-                placeholderTextColor="#999"
                 value={username}
                 onChangeText={setUsername}
+                keyboardType="default"
+                iconName="person"
             />
 
-            {/* Email Input */}
-            <TextInput
-                style={styles.input}
+            <InputComponent
                 placeholder="Email"
-                placeholderTextColor="#999"
-                keyboardType="email-address"
                 value={email}
                 onChangeText={setEmail}
+                keyboardType="email-address"
+                iconName="email"
             />
 
-            {/* Password Input */}
-            <TextInput
-                style={styles.input}
+            <InputComponent
                 placeholder="Password"
-                placeholderTextColor="#999"
-                secureTextEntry
                 value={password}
                 onChangeText={setPassword}
+                secureTextEntry
+                iconName="lock"
             />
 
-            {/* Confirm Password Input */}
-            <TextInput
-                style={styles.input}
+            <InputComponent
                 placeholder="Confirm Password"
-                placeholderTextColor="#999"
-                secureTextEntry
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
+                secureTextEntry
+                iconName="lock"
             />
 
-            {/* Register Button */}
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
                 <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
 
-            {/* Already have an account? Login */}
             <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
                 <Text style={styles.loginText}>Already have an account? Login</Text>
             </TouchableOpacity>
@@ -90,15 +99,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 20,
-    },
-    input: {
-        width: '100%',
-        height: 50,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        fontSize: 16,
-        marginBottom: 15,
     },
     button: {
         width: '100%',

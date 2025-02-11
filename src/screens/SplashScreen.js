@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Image, ImageBackground, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { appIcon, wallpaper } from '../assets/images';
+import { colors } from '../constants/Colors';
 
 const SplashScreen = () => {
   const navigation = useNavigation();
@@ -26,33 +28,26 @@ const SplashScreen = () => {
     checkUserStatus();
   }, []);
 
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Chat App</Text>
-        <ActivityIndicator size="large" color="#4CAF50" />
-        <Text style={styles.subtitle}>Loading...</Text>
-      </View>
+  return (
+    <ImageBackground source={wallpaper} style={styles.background}>
+      <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  background: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: colors.green,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginBottom: 20,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: 'gray',
-    marginTop: 10,
+  logo: {
+    width: 100,
+    height: 100,
   },
 });
 
 export default SplashScreen;
+
