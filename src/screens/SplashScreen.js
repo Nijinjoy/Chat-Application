@@ -14,11 +14,11 @@ const SplashScreen = () => {
         const userToken = await AsyncStorage.getItem('userToken');
         setTimeout(() => {
           if (userToken) {
-            navigation.replace('Home'); // Navigate to Home if user is logged in
+            navigation.replace('Home'); 
           } else {
-            navigation.replace('WelcomeScreen'); // Navigate to WelcomeScreen if not registered
+            navigation.replace('RegisterScreen'); 
           }
-        }, 2000); // Delay for 2 seconds
+        }, 2000); 
       } catch (error) {
         console.error("Error checking user status:", error);
         navigation.replace('WelcomeScreen');

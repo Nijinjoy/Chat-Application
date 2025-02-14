@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
 import HomeScreen from '../screens/HomeScreen';
 import ChatlistScreen from '../screens/ChatListScreen';
 import SettingScreen from '../screens/SettingScreen';
@@ -12,7 +11,6 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SplashScreen from '../screens/SplashScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import LoginScreen from '../screens/LoginScreen';
-import WelcomeScreen from '../screens/WelcomeScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -79,7 +77,6 @@ const Routes = () => {
         <NavigationContainer>
             <Stack.Navigator initialRouteName={initialRoute}>
                 <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
                 <Stack.Screen name="LoginScreen" component={LoginScreen} />
