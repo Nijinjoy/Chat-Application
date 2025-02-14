@@ -47,6 +47,7 @@ const BottomTabs = () => {
                     borderTopColor: '#ddd',
                 },
                 // tabBarShowLabel: false, 
+                headerShown: false, 
             })}
         >
             <Tab.Screen name="Chats" component={ChatlistScreen} />
