@@ -12,13 +12,17 @@ const SplashScreen = () => {
     const checkUserStatus = async () => {
       try {
         const userToken = await AsyncStorage.getItem('userToken');
+        const userRegistered = await AsyncStorage.getItem('userRegistered'); // Check if the user is registered
+
         setTimeout(() => {
           if (userToken) {
-            navigation.replace('Home'); 
+            navigation.replace('Home'); // Navigate to Home if logged in
+          } else if (userRegistered) {
+            navigation.replace('LoginScreen'); // Navigate to Login if registered but not logged in
           } else {
-            navigation.replace('RegisterScreen'); 
+            navigation.replace('RegisterScreen'); // Navigate to Register if not registered
           }
-        }, 2000); 
+        }, 2000);
       } catch (error) {
         console.error("Error checking user status:", error);
         navigation.replace('WelcomeScreen');
@@ -50,4 +54,3 @@ const styles = StyleSheet.create({
 });
 
 export default SplashScreen;
-

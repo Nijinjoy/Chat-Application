@@ -21,35 +21,42 @@ const BottomTabs = () => {
                 tabBarIcon: ({ color, size }) => {
                     let iconName;
                     switch (route.name) {
-                        case 'Home':
-                            iconName = 'home';
+                        case 'Chats':
+                            iconName = 'chat-bubble-outline';
                             break;
-                        case 'Chat':
-                            iconName = 'chat';
+                        case 'Calls':
+                            iconName = 'call';
+                            break;
+                        case 'Contacts':
+                            iconName = 'people-outline';
                             break;
                         case 'Settings':
                             iconName = 'settings';
-                            break;
-                        case 'Profile':
-                            iconName = 'person';
                             break;
                         default:
                             iconName = 'circle';
                     }
                     return <Icon name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: 'green',
+                tabBarActiveTintColor: '#2e7d32', // WhatsApp-like green color
                 tabBarInactiveTintColor: 'gray',
-                tabBarStyle: { height: 60 },
+                tabBarStyle: {
+                    height: 60,
+                    backgroundColor: 'white',
+                    borderTopWidth: 1,
+                    borderTopColor: '#ddd',
+                },
+                // tabBarShowLabel: false, 
             })}
         >
-            <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Chat" component={ChatlistScreen} />
+            <Tab.Screen name="Chats" component={ChatlistScreen} />
+            <Tab.Screen name="Calls" component={HomeScreen} />
+            <Tab.Screen name="Contacts" component={ProfileScreen} />
             <Tab.Screen name="Settings" component={SettingScreen} />
-            <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>
     );
 };
+
 
 const Stack = createStackNavigator();
 
@@ -61,9 +68,9 @@ const Routes = () => {
             try {
                 const userRegistered = await AsyncStorage.getItem('userRegistered');
                 if (userRegistered === 'true') {
-                    setInitialRoute('Main'); // If registered, go to Home
+                    setInitialRoute('Main'); 
                 } else {
-                    setInitialRoute('WelcomeScreen'); // If not, go to Welcome/Register
+                    setInitialRoute('WelcomeScreen'); 
                 }
             } catch (error) {
                 console.error('Error reading user registration status:', error);

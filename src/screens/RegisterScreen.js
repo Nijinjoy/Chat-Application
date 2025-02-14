@@ -33,8 +33,6 @@ const RegisterScreen = ({ navigation }) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
             const user = userCredential.user;
-
-            // Update user profile with username
             await updateProfile(user, { displayName: form.username });
 
             console.log("Registered user:", user);
@@ -50,7 +48,7 @@ const RegisterScreen = ({ navigation }) => {
             }));
 
             Alert.alert("Success", "Registration Successful!");
-            navigation.replace('LoginScreen'); // Redirect to Login
+            navigation.replace('Main'); 
         } catch (error) {
             let errorMessage = "Registration failed.";
             if (error.code === 'auth/email-already-in-use') {
