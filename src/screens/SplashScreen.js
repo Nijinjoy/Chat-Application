@@ -1,56 +1,80 @@
-import React, { useEffect } from 'react';
-import { View, Image, ImageBackground, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, ImageBackground, StyleSheet, Animated, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { appIcon, wallpaper } from '../assets/images';
 import { colors } from '../constants/Colors';
 
 const SplashScreen = () => {
   const navigation = useNavigation();
+  const [progress] = useState(new Animated.Value(0));
 
   useEffect(() => {
-    const checkUserStatus = async () => {
-      try {
-        const userToken = await AsyncStorage.getItem('userToken');
-        const userRegistered = await AsyncStorage.getItem('userRegistered'); // Check if the user is registered
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: 3000,
+      useNativeDriver: false,
+    }).start();
 
-        setTimeout(() => {
-          if (userToken) {
-            navigation.replace('Home'); // Navigate to Home if logged in
-          } else if (userRegistered) {
-            navigation.replace('LoginScreen'); // Navigate to Login if registered but not logged in
-          } else {
-            navigation.replace('RegisterScreen'); // Navigate to Register if not registered
-          }
-        }, 2000);
-      } catch (error) {
-        console.error("Error checking user status:", error);
-        navigation.replace('WelcomeScreen');
-      }
-    };
+    const timer = setTimeout(() => {
+      navigation.replace('RegisterScreen');
+    }, 3000);
 
-    checkUserStatus();
-  }, []);
+    return () => clearTimeout(timer);
+  }, [navigation, progress]);
 
   return (
     <ImageBackground source={wallpaper} style={styles.background}>
-      <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+      <View style={styles.logoContainer}>
+        <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+        <Text style={styles.appName}>ConvoSpace</Text>
+      </View>
+      <Animated.View
+        style={[
+          styles.progressBar,
+          {
+            width: progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0%', '50%'],
+            }),
+          },
+        ]}
+      />
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   background: {
-    width: '100%',
-    height: '100%',
+    flex: 1,
     backgroundColor: colors.green,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 100,
   },
   logo: {
     width: 100,
     height: 100,
   },
+  progressBar: {
+    position: 'absolute',
+    bottom: 20,
+    left: '25%',
+    width: '50%',
+    height: 5,
+    backgroundColor: 'white',
+    borderRadius: 2.5,
+  },
+  appName: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: 'white',
+    marginTop: 20,
+  },
 });
 
 export default SplashScreen;
+
+

@@ -1,69 +1,72 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import HomeScreen from '../screens/HomeScreen';
-import ChatlistScreen from '../screens/ChatListScreen';
-import SettingScreen from '../screens/SettingScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import SplashScreen from '../screens/SplashScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import LoginScreen from '../screens/LoginScreen'
+import React, { useEffect, useRef } from 'react';
+import { View, Image, ImageBackground, StyleSheet, ActivityIndicator, Animated } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from '../services/firebaseConfig';
+import { appIcon, wallpaper } from '../assets/images';
+import { colors } from '../constants/Colors';
 
-const Tab = createBottomTabNavigator();
+const SplashScreen = () => {
+    const navigation = useNavigation();
+    const fadeAnim = useRef(new Animated.Value(0)).current; // Fade animation
+    const timeoutRef = useRef(null); // Prevent duplicate timeouts
 
-const BottomTabs = () => {
-    return (
-        <Tab.Navigator
-            screenOptions={({ route }) => ({
-                tabBarIcon: ({ color, size }) => {
-                    let iconName;
-                    switch (route.name) {
-                        case 'Home':
-                            iconName = 'home';
-                            break;
-                        case 'Chat':
-                            iconName = 'chat';
-                            break;
-                        case 'Settings':
-                            iconName = 'settings';
-                            break;
-                        case 'Profile':
-                            iconName = 'person';
-                            break;
-                        default:
-                            iconName = 'circle';
+    useEffect(() => {
+        // Start fade-in animation
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+        }).start();
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            timeoutRef.current = setTimeout(() => {
+                try {
+                    if (user) {
+                        navigation.replace("ChatListScreen"); // User is logged in
+                    } else {
+                        navigation.replace("RegisterScreen"); // User not registered
                     }
-                    return <Icon name={iconName} size={size} color={color} />;
-                },
-                tabBarActiveTintColor: 'green',
-                tabBarInactiveTintColor: 'gray',
-                tabBarStyle: { height: 60 },
-            })}
-        >
-            <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Chat" component={ChatlistScreen} />
-            <Tab.Screen name="Settings" component={SettingScreen} />
-            <Tab.Screen name="Profile" component={ProfileScreen} />
-        </Tab.Navigator>
-    );
-};
+                } catch (error) {
+                    console.error("Navigation Error:", error);
+                }
+      }, 2000); // Delay for splash effect
+    });
 
-const Stack = createStackNavigator();
+      // Cleanup: Unsubscribe & clear timeout
+      return () => {
+          unsubscribe();
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      };
+  }, [navigation, fadeAnim]);
 
-const Routes = () => {
     return (
-        <NavigationContainer>
-            <Stack.Navigator>
-                <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
-                <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-                <Stack.Screen name="LoginScreen" component={LoginScreen} />
-
-            </Stack.Navigator>
-        </NavigationContainer>
-    );
+      <ImageBackground source={wallpaper} style={styles.background}>
+          <Animated.View style={[styles.logoContainer, { opacity: fadeAnim }]}>
+              <Image source={appIcon} style={styles.logo} resizeMode="contain" />
+          </Animated.View>
+          {/* <ActivityIndicator size="large" color="white" style={styles.loader} /> */}
+      </ImageBackground>
+  );
 };
 
-export default Routes;
+const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        backgroundColor: colors.green,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logoContainer: {
+        alignItems: 'center',
+    },
+    logo: {
+        width: 100,
+        height: 100,
+    },
+    loader: {
+        marginTop: 20,
+    },
+});
+
+export default SplashScreen;
